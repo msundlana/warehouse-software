@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ArticleServiceImpl extends BaseService<Article,ArticleDTO> implements ArticleService {
@@ -53,8 +54,14 @@ public class ArticleServiceImpl extends BaseService<Article,ArticleDTO> implemen
 
     @Override
     public ArticleDTO addArticle(ArticleDTO articleDto) {
-        logger.info("Adding new article: {}", articleDto);
-        var article = articleRepository.save(this.convertToEntity(articleDto));
+        var optionalArticle = Optional.of(findArticleById(articleDto.getId()));
+        var article = this.convertToEntity(articleDto);
+        if(optionalArticle.isPresent()){
+            logger.info("Update new article: {}", articleDto);
+            var stock = optionalArticle.get().getStock() + article.getStock();
+            article.setStock(stock);
+        }
+        article = articleRepository.save(article);
         logger.info("Article added: {}", article);
         return this.convertToDto(article);
     }
