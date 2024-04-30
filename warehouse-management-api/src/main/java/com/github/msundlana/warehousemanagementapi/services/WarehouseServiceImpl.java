@@ -20,7 +20,7 @@ public class WarehouseServiceImpl extends BaseService<Product,ProductDTO> implem
     private ProductService productService;
 
     @Autowired
-    private ProductArticleRepository productArticleRepository;
+    private ProductArticleService productArticleService;
 
     public WarehouseServiceImpl() {
         super(Product.class,ProductDTO.class);
@@ -42,7 +42,12 @@ public class WarehouseServiceImpl extends BaseService<Product,ProductDTO> implem
     public Page<ProductInventoryDTO> getAllAvailableProducts(String query,int page, int pageSize) {
 
         logger.info("Retrieving all available products");
-        var productPage  = productService.getAllProducts(PageRequest.of(page, pageSize));
+        var productPage  = productService.getAllProducts(PageRequest.of(page, pageSize))
+                .map((productDTO -> {
+                    var productArticle = productArticleService.getLinkProductArticleToProduct(productDTO.getId());
+                    productDTO.setArticles(productArticle);
+                    return productDTO;
+                }));
         return productPage.map(this::mapToProductInventoryDTO);
     }
 

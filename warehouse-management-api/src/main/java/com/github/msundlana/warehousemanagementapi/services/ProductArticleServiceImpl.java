@@ -9,6 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Service
 public class ProductArticleServiceImpl extends BaseService<ProductArticle, ProductArticleDTO> implements ProductArticleService{
     private static final Logger logger = LoggerFactory.getLogger(ProductArticleServiceImpl.class);
@@ -41,6 +45,9 @@ public class ProductArticleServiceImpl extends BaseService<ProductArticle, Produ
         return convertToDto(result);
     }
 
-
+    public Set<ProductArticleDTO> getLinkProductArticleToProduct(Long productId){
+        var productArticle = productArticleRepository.findAllByProductId(productId);
+        return productArticle.stream().map(this::convertToDto).collect(Collectors.toSet());
+    }
 
 }
