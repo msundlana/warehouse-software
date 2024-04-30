@@ -1,6 +1,9 @@
 # Warehouse Management Application
 
 
+
+[`Architectural Choice Document`](./documents/Warehouse%20presentation.pptx) and [`HELP resource Document`](./HELP.md)
+
 # README
 
 This README would normally document whatever steps are necessary to get the application up and running.
