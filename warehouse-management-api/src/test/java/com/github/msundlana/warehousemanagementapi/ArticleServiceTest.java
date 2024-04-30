@@ -3,14 +3,11 @@ package com.github.msundlana.warehousemanagementapi;
 import com.github.msundlana.warehousemanagementapi.exception.ArticleNotFoundException;
 import com.github.msundlana.warehousemanagementapi.models.Article;
 import com.github.msundlana.warehousemanagementapi.models.ArticleDTO;
-import com.github.msundlana.warehousemanagementapi.models.Product;
-import com.github.msundlana.warehousemanagementapi.models.ProductDTO;
+
 import com.github.msundlana.warehousemanagementapi.repositories.ArticleRepository;
 import com.github.msundlana.warehousemanagementapi.services.ArticleService;
 import com.github.msundlana.warehousemanagementapi.services.ArticleServiceImpl;
-import com.github.msundlana.warehousemanagementapi.services.ProductServiceImpl;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.ValidationException;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -44,6 +41,37 @@ public class ArticleServiceTest {
 
 
     @Test
+    public void testSellArticle() {
+        var articleId = 1L;
+        var existingArticle = createTestArticle();
+
+        when(articleRepository.findById(articleId)).thenReturn(Optional.of(existingArticle));
+        when(articleRepository.save(any(Article.class))).thenReturn(existingArticle);
+
+
+        var updatedArticle = articleService.sellArticle(articleId, 2);
+
+        assertNotNull(updatedArticle);
+        assertEquals("Test article", updatedArticle.getName());
+        assertEquals(4,updatedArticle.getStock());
+
+    }
+
+    @Test
+    public void testSellAndRemoveArticle() {
+        var articleId = 1L;
+        var existingArticle = createTestArticle();
+
+        when(articleRepository.findById(articleId)).thenReturn(Optional.of(existingArticle));
+
+        articleService.sellArticle(articleId, 6);
+
+        assertFalse(articleRepository.existsById(articleId));
+
+    }
+
+
+    @Test
     public void testGetArticleById() {
         var articleId = 1L;
         var article = createTestArticle();
@@ -53,8 +81,8 @@ public class ArticleServiceTest {
         var result = articleService.getArticleById(articleId);
 
         assertNotNull(result);
-        assertEquals("Test Article", result.getName());
-        assertEquals(4.0, result.getStock());
+        assertEquals("Test article", result.getName());
+        assertEquals(6.0, result.getStock());
     }
 
     @Test
@@ -146,8 +174,14 @@ public class ArticleServiceTest {
         var articleId = 1L;
         var existingArticle = createTestArticle();
 
+        var updatedArticle =  Article.builder()
+                .id(articleId)
+                .name("Updated article")
+                .stock(4)
+                .build();
+
         when(articleRepository.findById(articleId)).thenReturn(Optional.of(existingArticle));
-        when(articleRepository.save(any(Article.class))).thenReturn(existingArticle);
+        when(articleRepository.save(any(Article.class))).thenReturn(updatedArticle);
 
         var updatedArticleDto =  ArticleDTO.builder()
                 .id(articleId)
@@ -155,11 +189,11 @@ public class ArticleServiceTest {
                 .stock(4)
                 .build();
 
-        var updatedArticle = articleService.updateArticle(articleId, updatedArticleDto);
+        var updatedArticleDTO = articleService.updateArticle(articleId, updatedArticleDto);
 
-        assertNotNull(updatedArticle);
-        assertEquals("Updated Article", updatedArticle.getName());
-        assertEquals(4,updatedArticle.getStock());
+        assertNotNull(updatedArticleDTO);
+        assertEquals("Updated article", updatedArticleDTO.getName());
+        assertEquals(4,updatedArticleDTO.getStock());
     }
 
     @Test

@@ -42,9 +42,7 @@ public class WarehouseServiceImpl extends BaseService<Product,ProductDTO> implem
     public Page<ProductInventoryDTO> getAllAvailableProducts(String query,int page, int pageSize) {
 
         logger.info("Retrieving all available products");
-//        0,query,PageRequest.of(page, pageSize))
         var productPage  = productService.getAllProducts(PageRequest.of(page, pageSize));
-
         return productPage.map(this::mapToProductInventoryDTO);
     }
 
@@ -70,12 +68,13 @@ public class WarehouseServiceImpl extends BaseService<Product,ProductDTO> implem
     private int getAvailableStock(ProductDTO product) {
         logger.info("Getting available stock of product {} with ID: {}",product.getName(),product.getId());
         var minStock = Integer.MAX_VALUE;
-//        for (var productArticle : product.getArticles()) {
-//            var article = productArticle.getArticle();
-//            var requiredStock = productArticle.getQuantity();
-//            var availableStock = article.getStock() / requiredStock;
-//            minStock = Math.min(minStock, availableStock);
-//        }
+        for (var productArticle : product.getArticles()) {
+            var article = productArticle.getArticle();
+            var requiredStock = productArticle.getQuantity();
+            var availableStock = article.getStock() / requiredStock;
+
+            minStock = Math.min(minStock, availableStock);
+        }
         return minStock;
     }
 }

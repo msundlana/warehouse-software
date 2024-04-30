@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 @EnableMethodSecurity(prePostEnabled = true)
 public class InMemoryUserDetailsService implements UserDetailsService {
+
     public static final String USER_ROLE = "USER";
     public static final String ADMIN_ROLE = "ADMIN";
 

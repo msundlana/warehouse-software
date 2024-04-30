@@ -1,5 +1,6 @@
 package com.github.msundlana.warehousemanagementapi.models;
 
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +13,7 @@ import lombok.extern.jackson.Jacksonized;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductInventoryDTO {
+    @Positive
     private Long id;
     private String name;
     private double price;

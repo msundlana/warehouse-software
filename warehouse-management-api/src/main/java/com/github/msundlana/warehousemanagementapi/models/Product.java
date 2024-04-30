@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -14,6 +15,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "Product")
 public class Product {
 
     @Id
@@ -26,8 +28,7 @@ public class Product {
     @Column(nullable = false)
     private double price;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "product_id")
-    private List<ProductArticle> articles;
+    @OneToMany(mappedBy = "product",cascade = CascadeType.PERSIST, fetch=FetchType.LAZY)
+    private Set<ProductArticle> articles;
 
 }

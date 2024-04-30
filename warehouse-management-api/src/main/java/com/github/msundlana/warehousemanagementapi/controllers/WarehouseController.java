@@ -46,6 +46,7 @@ public class WarehouseController {
         return ResponseEntity.ok(savedProducts.size()+" Products loaded successfully");
     }
 
+
     @GetMapping("/products")
     public ResponseEntity<Page<ProductInventoryDTO>> getAllAvailableProducts(@RequestParam(required = false) String searchText,
                                                                              @RequestParam(required = false, defaultValue = "0") @PositiveOrZero Integer page,

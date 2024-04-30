@@ -63,10 +63,28 @@ public class ArticleServiceImpl extends BaseService<Article,ArticleDTO> implemen
     public ArticleDTO updateArticle(long id, ArticleDTO articleDto) {
         logger.info("Updating article with ID {}: {}", id, articleDto);
         var article = findArticleById(id);
-        this.convertToEntity(articleDto, article);
+        article = this.convertToEntity(articleDto, article);
         var savedArticle = articleRepository.save(article);
         logger.info("Article updated: {}", savedArticle);
         return this.convertToDto(savedArticle);
+    }
+
+    @Override
+    public ArticleDTO sellArticle(long id, int quantity){
+        var article = findArticleById(id);
+        var newStock = article.getStock() - quantity;
+        if(newStock>0){
+            logger.info("Update article with id : {}", article.getId() );
+            article.setStock(newStock);
+            var soldArticle = articleRepository.save(article);
+            return convertToDto(soldArticle);
+
+        }else {
+            logger.info("Remove article with id : {}", article.getId() );
+            articleRepository.deleteById(id);
+            return null;
+        }
+
     }
 
     @Override

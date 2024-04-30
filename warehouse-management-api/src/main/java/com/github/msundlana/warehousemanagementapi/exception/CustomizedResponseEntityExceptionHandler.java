@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.client.ResourceAccessException;
@@ -18,6 +20,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.util.Date;
 
+@ControllerAdvice
 public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(CustomizedResponseEntityExceptionHandler.class);
 
@@ -30,6 +33,18 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
                 .details(request.getDescription(false))
                 .build();
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(exceptionResponse);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ExceptionResponse> handlerForbiddenException(ForbiddenException ex, WebRequest request) {
+        logger.error("Forbidden access: {}", ex.getMessage());
+        var exceptionResponse = ExceptionResponse.builder()
+                .timestamp(new Date())
+                .message(ex.getMessage())
+                .details(request.getDescription(false))
+                .build();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(exceptionResponse);
     }
 
@@ -46,7 +61,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
                 .body(exceptionResponse);
     }
 
-    @ExceptionHandler({ArticleNotFoundException.class,ProductNotFoundException.class})
+    @ExceptionHandler({ArticleNotFoundException.class,ProductNotFoundException.class, UsernameNotFoundException.class})
     public final ResponseEntity<ExceptionResponse> handleResourceNotFoundException
             (Exception ex, WebRequest request)  {
 

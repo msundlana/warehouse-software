@@ -1,5 +1,6 @@
 package com.github.msundlana.warehousemanagementapi.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,6 +12,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "ProductArticle",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "ProductArticle", columnNames = {"product_id", "article_id"})
+        })
 public class ProductArticle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -17,5 +17,6 @@ public interface ArticleService {
 
     ArticleDTO updateArticle(long id, ArticleDTO articleDTO);
 
+    ArticleDTO sellArticle(long id, int quantity);
     void deleteArticle(long id);
 }

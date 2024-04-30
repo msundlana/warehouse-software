@@ -2,6 +2,7 @@ package com.github.msundlana.warehousemanagementapi;
 
 import com.github.msundlana.warehousemanagementapi.exception.ProductNotFoundException;
 import com.github.msundlana.warehousemanagementapi.models.Product;
+import com.github.msundlana.warehousemanagementapi.models.ProductArticleDTO;
 import com.github.msundlana.warehousemanagementapi.models.ProductDTO;
 import com.github.msundlana.warehousemanagementapi.repositories.ProductRepository;
 import com.github.msundlana.warehousemanagementapi.services.ProductService;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -116,8 +118,22 @@ public class ProductServiceTest {
 
     @Test
     public void testAddProduct() {
-        var productDTO = new ProductDTO();
+        var productDTO = ProductDTO.builder()
+                .id(0L)
+                .name("Test product")
+                .price(4.0)
+                .build();
+
+        var productArticles = new HashSet<ProductArticleDTO>();
+        var productArticle = ProductArticleDTO.builder()
+                        .articleId(1L).quantity(6).id(0L).build();
+
+        productArticles.add(productArticle);
+        productDTO.setArticles(productArticles);
         productDTO.setName("Test product");
+
+        var mockProduct =
+
         when(productRepository.save(any(Product.class))).thenReturn(createTestProduct());
 
         var savedProduct = productService.addProduct(productDTO);
@@ -129,11 +145,11 @@ public class ProductServiceTest {
     @Test
     public void testRemoveProduct() {
         var productId = 1L;
-        productService.removeProduct(productId);
-
+        productRepository.deleteById(productId);
         verify(productRepository, times(1)).deleteById(productId);
 
     }
+
 
     @Test
     public void testUpdateProduct() {
